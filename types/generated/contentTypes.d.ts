@@ -781,6 +781,78 @@ export interface PluginI18NLocale extends Schema.CollectionType {
   };
 }
 
+export interface ApiTicketTicket extends Schema.CollectionType {
+  collectionName: 'tickets';
+  info: {
+    singularName: 'ticket';
+    pluralName: 'tickets';
+    displayName: 'Ticket';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    subject: Attribute.String & Attribute.Required;
+    message: Attribute.Text & Attribute.Required;
+    status: Attribute.Enumeration<['open', 'answered', 'closed']> &
+      Attribute.DefaultTo<'open'>;
+    priority: Attribute.Enumeration<['low', 'medium', 'high']> &
+      Attribute.Required &
+      Attribute.DefaultTo<'low'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::ticket.ticket',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::ticket.ticket',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiTicketAnsweredTicketAnswered extends Schema.CollectionType {
+  collectionName: 'ticket_answereds';
+  info: {
+    singularName: 'ticket-answered';
+    pluralName: 'ticket-answereds';
+    displayName: 'TicketAnswered';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    message: Attribute.Text & Attribute.Required;
+    ticket: Attribute.Relation<
+      'api::ticket-answered.ticket-answered',
+      'oneToOne',
+      'api::ticket.ticket'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::ticket-answered.ticket-answered',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::ticket-answered.ticket-answered',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -799,6 +871,8 @@ declare module '@strapi/types' {
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
       'plugin::i18n.locale': PluginI18NLocale;
+      'api::ticket.ticket': ApiTicketTicket;
+      'api::ticket-answered.ticket-answered': ApiTicketAnsweredTicketAnswered;
     }
   }
 }
